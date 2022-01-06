@@ -1,1 +1,2 @@
 $PWD/zsh/zshrc $HOME/.zshrc
+$PWD/git/gitconfig $HOME/.gitconfig
