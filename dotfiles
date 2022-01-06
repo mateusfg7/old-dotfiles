@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if [ -z $1 ]; then
+  echo "There is no argument!"
+  exit
+fi
+
+if [ $1 = "install" ]; then
+  
+  while read line; do
+    origin_path=$(eval echo $line | awk '{print $1}')
+    destination_path=$(eval echo $line | awk '{print $2}')
+
+    echo "LOG | Creating symbolic link of $origin_path on $destination_path"
+    ln -sf $origin_path $destination_path
+  done < paths.txt
+
+fi
