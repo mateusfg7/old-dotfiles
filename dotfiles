@@ -1,18 +1,60 @@
 #!/bin/bash
 
+# FUNCTIONS
+
+show_log() {
+  printf "\e[1;33mLOG |\e[0m $1"
+  echo
+}
+
+show_error() {
+  printf "\e[1;31mLOG |\e[0m $1"
+  echo
+}
+
+# INITIAL VERIFICATIONS
+
 if [ -z $1 ]; then
-  echo "There is no argument!"
+  show_error "There is no argument!"
   exit
 fi
 
+# USE CASES
+
 if [ $1 = "install" ]; then
-  
+
   while read line; do
     origin_path=$(eval echo $line | awk '{print $1}')
     destination_path=$(eval echo $line | awk '{print $2}')
 
-    echo "LOG | Creating symbolic link of $origin_path on $destination_path"
-    ln -sf $origin_path $destination_path
+    show_log "Creating symbolic link of $origin_path on $destination_path"
+
+    ln -sf $origin_path $destination_path &&\
+      show_log "Symbolic link of $origin_path created on $destination_path" ||\
+      show_error "Fails when create a symbolic link of $origin_path"
+    
   done < paths.txt
+
+elif [ $1 = "remove" ]; then
+
+  while read line; do
+    destination_path=$(eval echo $line | awk '{print $2}')
+    
+    show_log "Deleting $destination_path"
+
+    rm $destination_path &&\
+      show_log "$destination_path deleted" ||\
+      show_error "Fails when deleting $destination_path"
+    
+  done < paths.txt
+
+else
+
+  echo -e "usage: \e[1m./dotfiles [option]\e[0m"
+  echo
+  echo "Options:"
+  echo "  install   Create symbolic links for dotfiles listed on paths.txt"
+  echo "  remove    Delete dotfiles on system that are listed on paths.txt"
+  echo "  help      Show this help"
 
 fi
